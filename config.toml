@@ -1,7 +1,13 @@
 languageCode = "pt-BR"
 title = "Lucas dos Santos Abreu"
-baseurl = "http://lucassabreu.dev"
+baseurl = "/"
 theme = "after-dark"
+theme_variant = "dark-grey"
+
+disqusShortname = "lucas-dos-santos-abreu"
+
+[author]
+  name = "Lucas dos Santos Abreu"
 
 [[menu.main]]
   name = "Home"
@@ -10,13 +16,26 @@ theme = "after-dark"
   url = "/"
 
 [[menu.main]]
-  name = "Postagens"
-  weight = 1
-  identifier = "posts"
-  url = "/post/"
+  name = "Twitter"
+  weight = 2
+  identifier = "twitter"
+  url = "https://twitter.com/LucasSantAbreu"
+
+[[menu.main]]
+  name = "GitHub"
+  weight = 3
+  identifier = "github"
+  url = "https://github.com/lucassabreu"
+
+[[menu.main]]
+  name = "Medium"
+  weight = 4
+  identifier = "medium"
+  url = "https://medium.com/@lucassabreu"
 
 [[menu.main]]
   name = "LinkedIn"
-  weight = 2
+  weight = 5
   identifier = "linkedin"
   url = "https://www.linkedin.com/in/lucassantosabreu"
+

@@ -1,0 +1,8 @@
+[submodule "public"]
+	path = public
+	url = git@github.com:lucassabreu/lucassabreu.github.io.git
+	branch = master
+[submodule "themes/after-dark"]
+	path = themes/after-dark
+	url = git@github.com:lucassabreu/after-dark.git
+	branch = master
