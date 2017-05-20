@@ -40,7 +40,3 @@ O script e como usá-lo estão aqui:
 <https://github.com/Coderockr/coderockr-way-github-setup>
 
 Conclusão, investir um pouco de tempo para entender as ferramentas que você usa, não só te poupa tempo a longo prazo, quanto também gera uns scripts legais de compartilhar :)
-
-* * *
-
-Gostou do post e achou útil? Dê um like ❤️ abaixo para ajudar na divulgação e para que mais pessoas tenham acesso :)
