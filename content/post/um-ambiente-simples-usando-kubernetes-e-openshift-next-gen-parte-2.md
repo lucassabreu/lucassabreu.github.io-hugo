@@ -14,7 +14,7 @@ next = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3
 
 <!--more-->
 
-{{< figure src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" >}}
+{{< figure class="big" src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" >}}
 
 Este post é parte de uma série sobre o básico necessário para usar o Kubernetes, caso você não tenha lido os post anteriores recomendo lê-los e depois voltar aqui para não ficar perdido.
 
@@ -36,7 +36,39 @@ Como não é uma boa ideia simplesmente definir um Pod diretamente, criei dois D
 
 *No momento da escrita desse post os Deployments ainda estavam marcados como uma versão beta, mas já são bastante usados, então é confiável.*
 
-{{< gist lucassabreu 66bcc63f8eefb4d61b0e149204d5b05b >}}
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "db-deployment"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: "db-pod"
+    spec:
+      containers:
+        - name: "db"
+          image: "lucassabreu/openshift-mysql-test"
+          ports:
+            - name: "mysql-port"
+              containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              value: appointments
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+            - name: MYSQL_USER
+              value: "appoint"
+            - name: MYSQL_PASSWORD
+              value: "123"
+          volumeMounts:
+            - name: "mysql-volume"
+              mountPath: "/var/lib/mysql"
+      volumes:
+        - name: "mysql-volume"
+```
 
 O primeiro Deployment é para o `db-deployment`. Os arquivos de configuração são simples de ler, sempre começamos o arquivo dizendo o tipo de objeto que será criado, o `metadata` e definimos as `specs` (que variam para cada tipo de componente).
 
@@ -47,34 +79,101 @@ Outras duas informações importantes são `ports` e `volumeMounts`.
 -   `ports` define quais portas deverão ser expostas no Pod e permite que possam ser mapeadas nos Services posteriormente. Também é recomendado dar nomes às mesmas (`mysql-port`), assim podemos usar o nome como identificador no lugar de números.
 -   `volumeMounts` define todos os volumes do contêiner, dessa forma o volume de dados do MySQL precisou ser mapeado (`/var/lib/mysql`).
 
-{{< gist lucassabreu f7196c220fe9758b31334422172ebcc7 >}}
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "node-deployment"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: "node-pod"
+    spec:
+      containers:
+        - name: "node"
+          image: "lucassabreu/openshift-app-test"
+          ports:
+            - name: node-port
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: DATABASE_CONNECTION
+              value: mysql://appoint:123@db-service:3306/appointments
+```
 
 O segundo Deployment é do servidor HTTP, chamei-o de `node-deployment`. Ele segue as mesmas regras do anterior, sendo até mais simples.
 
 A novidade aqui é o `db-service`, que vou explicar agora:
 
-{{< gist lucassabreu 88d78bb5ee645bea01a93b2b12eb4eef >}}
+```yaml
+apiVersion: "v1"
+kind: Service
+metadata:
+  name: "db-service"
+spec:
+  ports:
+    - port: 3306
+      targetPort: "mysql-port"
+      protocol: TCP
+  selector:
+    name: "db-pod"
+```
 
 O `db-service` é o nome do Service que defini para agrupar os Pods de banco de dados, o Service ficou bem simples e basicamente tem duas partes:
 
 -   `selector` define uma regra para selecionar quais Pods fazem parte do Service, no caso estou usando uma regra bem simples de `name=db-pod`.
 -   `ports` permite que você mapeie as portas dos Pods para uma porta no Service, no caso estou roteando a porta de nome `mysql-port` para a `3306` do Service. Assim toda chamada para `db-service:3306` será direcionada para a `mysql-port` de um dos Pods.
 
-{{< gist lucassabreu f74cc97d1520471693655e0f34f46452 >}}
+```yaml
+apiVersion: "v1"
+kind: Service
+metadata:
+  name: "node-service"
+spec:
+  ports:
+    - port: 80
+      targetPort: "node-port"
+      protocol: TCP
+  selector:
+    name: "node-pod"
+```
 
 O `node-service` segue a mesma lógica, mas para os Pods do servidor HTTP.
 
-{{< gist lucassabreu 157e8b8299fa4583a45d8faf37c8008f >}}
+```yaml
+apiVersion: v1
+kind: Route
+metadata:
+  name: "node-route"
+spec:
+  to:
+    kind: Service
+    name: "node-service"
+```
 
 Por fim criei uma Route para expor o serviço `node-service` para a Internet. Eu poderia definir qual o nome de host, mas como não o fiz o OpenShift irá gerar uma URL automaticamente para mim.
 
 Essa URL pode ser descoberta entrando na Dashboard do OpenShift ou com o comando `oc get routes`:
 
-{{< gist lucassabreu a895defcc927e2f7fc86c90bd23b36f2 >}}
+```shell
+$ oc get routes
+NAME         HOST/PORT                                                  PATH      SERVICES       PORT      TERMINATION
+node-route   node-route-medium-example.44fs.preview.openshiftapps.com             node-service   <all>
+```
 
 Para aplicar as configurações no cluster a OpenShift disponibiliza um cliente de linha de comando, que usa basicamente a mesma estrutura do `kubectl`, o `oc`. Então tudo que precisa ser feito é executar:
 
-{{< gist lucassabreu a0db51d0d36187ee63017ed36ad066ff >}}
+```shell
+oc apply -f db-deployment.yml,node-deployment.yml,db-srv.yml,node-srv.yml,node-route.yml
+# Ou
+oc apply -f db-deployment.yml
+oc apply -f node-deployment.yml
+oc apply -f db-srv.yml
+oc apply -f node-srv.yml
+oc apply -f node-route.yml
+```
 
 * * *
 
@@ -93,7 +192,7 @@ Se estiver lendo esse artigo algum tempo depois de lançado, a OpenShift fechou 
 
 Caso não queira criar os todos esses fontes, pode pegá-los aqui: <https://github.com/lucassabreu/openshift-next-gen/tree/v1>; ou executar:
 
-```
+```shell
 git clone -b v1 \
     https://github.com/lucassabreu/openshift-next-gen.git
 ```
@@ -103,7 +202,7 @@ git clone -b v1 \
 Agora no console do OpenShift deverão aparecer todos esses componentes
 rodando.
 
-{{< figure src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/openshift-dashboard.png"
+{{< figure class="big" src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/openshift-dashboard.png"
         title="eu fiz algumas brincadeiras antes de chegar aqui, então tenho mais versões dos deploys ☺" >}}
 
 Caso esteja acompanhando as etapas, você já deve ter visto esse Dashboard, mas caso esteja apenas lendo: esse Dashboard é a tela principal dos clusters que você criar no OpenShift; basta clicar aqui, autenticar-se com o GitHub, criar um **Project**, e pronto em **Overview** você verá os componentes surgirem e sumirem em tempo real conforme vai aplicando as configurações.

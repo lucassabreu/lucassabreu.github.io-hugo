@@ -42,7 +42,17 @@ Então publiquei no [Docker Hub](http://hub.docker.com) uma imagem para a aplica
 
 Agora se eu quiser executar essa aplicação na minha máquina, posso simplesmente executar os seguintes comando do Docker e terei o servidor me respondendo em `http://localhost`:
 
-{{< gist lucassabreu 1a34c2c4e92ff36e07802b0ea0db9a6d >}}
+```bash
+#!/bin/bash
+docker run -d --name db-test \
+  -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=appointments \
+  -e MYSQL_USER=appoint -e MYSQL_PASSWORD=123 \
+  lucassabreu/openshift-mysql-test
+
+docker run -d --name app-test --link db-test:db \
+  -e DATABASE_CONNECTION=mysql://appoint:123@$db:3306/appointments \
+  -p 80:8080 lucassabreu/openshift-app-test
+```
 
 Certo, agora que tenho certeza de que a minha aplicação está operacional, comecei a criar os objetos do Kubernetes, mas antes é importante entender alguns conceitos da plataforma para não ficar muito perdido:
 
@@ -58,15 +68,15 @@ Como o nome sugere controla o deploy de Pods dentro do cluster. Quando se cria e
 
 Ele irá garantir duas coisas principalmente: que existam suficientes Pods quanto foi definido, e que os mesmos estejam atualizados em relação ao template que foi definido.
 
-Então caso você mude algo no template o Deployment vai subir novos Pods e destruir os antigos para manter a expectativa (ele também “versiona” os deploys, então se algo explodir dá para voltar atrás).
+Então caso você mude algo no template o Deployment vai subir novos Pods e destruir os antigos para manter a expectativa (ele também "versiona" os deploys, então se algo explodir dá para voltar atrás).
 
 #### [Service](https://kubernetes.io/docs/user-guide/services/)
 
-Como os Pods além de efêmeros, podem existir em números variados por culpa dos Deployments, não há forma confiável de tentar conectar dois Pods diretamente, seja porque o Pod que você está dependendo pode morrer e quando voltar terá outro IP, e provavelmente outro nome, ou porque o Pod que você “fixou” pode não ser o mas indicado (menos ocupado ou mais próximo).
+Como os Pods além de efêmeros, podem existir em números variados por culpa dos Deployments, não há forma confiável de tentar conectar dois Pods diretamente, seja porque o Pod que você está dependendo pode morrer e quando voltar terá outro IP, e provavelmente outro nome, ou porque o Pod que você "fixou" pode não ser o mas indicado (menos ocupado ou mais próximo).
 
 Para resolver esse problema existem os Services, em vez de tentar fazer as chamadas diretamente para um Pod, podemos chamar pelo nome de um Service e este irá rotear para um Pod que esteja abaixo dele.
 
-É importante ressaltar que os Services fazem “apenas” a descoberta dos Pods, eles não os mantêm ligados, isso é responsabilidade dos Deployments.
+É importante ressaltar que os Services fazem "apenas" a descoberta dos Pods, eles não os mantêm ligados, isso é responsabilidade dos Deployments.
 
 #### [Route](https://docs.openshift.org/latest/architecture/core_concepts/routes.html)
 
