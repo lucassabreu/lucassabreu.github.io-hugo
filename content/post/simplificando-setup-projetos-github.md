@@ -1,5 +1,5 @@
 +++
-draft = true
+draft = false
 date = "2017-01-10"
 title = "Simplificando o Setup de Projetos no GitHub"
 description = "Criamos um script para inicializar as labels dos nossos projetos no GitHub e queremos compartilhar isso"

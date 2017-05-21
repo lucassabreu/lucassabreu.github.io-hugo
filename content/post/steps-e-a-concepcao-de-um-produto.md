@@ -5,7 +5,7 @@ title = "Steps e a concepção de um produto"
 images = ["https://source.unsplash.com/category/technology/1600x900"]
 tags = ["Apps","Social Anxiety","Product Design","New Product Development"]
 toc = false
-draft = true
+draft = false
 
 +++
 
