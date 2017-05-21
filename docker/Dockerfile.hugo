@@ -1,6 +1,7 @@
 FROM alpine:3.5
 
-RUN apk add --update hugo
+RUN apk add --update hugo py-pip && \
+    pip install --upgrade pip && pip install Pygments
 
 VOLUME /site
 WORKDIR /site

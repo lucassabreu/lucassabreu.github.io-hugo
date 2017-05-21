@@ -2,9 +2,12 @@ languageCode = "pt-BR"
 title = "Lucas dos Santos Abreu"
 baseurl = "/"
 theme = "after-dark"
-theme_variant = "dark-grey"
 
 disqusShortname = "lucas-dos-santos-abreu"
+pygmentsCodeFences = true
+
+[Params]
+  theme_variant = "hack"
 
 [author]
   name = "Lucas dos Santos Abreu"
