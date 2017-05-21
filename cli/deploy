@@ -1,0 +1,15 @@
+#!/bin/bash
+
+HUGO="/usr/bin/hugo"
+if [ ! -f "$HUGO" ]; then
+    HUGO="docker-compose --user $UID:$GID run --rm hugo"
+fi
+
+$HUGO -v -b https://lucassabreu.github.io
+
+cd public
+git add --all
+git commit -m "updated at $(date +'%F')"
+git push origin master
+
+cd ..
