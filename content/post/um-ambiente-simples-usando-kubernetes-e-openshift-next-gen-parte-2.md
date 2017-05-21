@@ -8,7 +8,7 @@ title = "Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte�
 description = "Uma vez que entendemos os conceitos básicos do Kubernetes na postagem anterior, vamos para uma demonstração de como utilizá-lo para montar uma aplicação simples"
 
 prev = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/"
-next = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/"
+next = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/"
 
 +++
 
