@@ -11,6 +11,8 @@ draft = true
 
 <!--more-->
 
+Recentemente na newsletter do Product Hunt me deparei com um aplicativo bem interessante que se propunha a solucionar um problema bem comum, com uma formula bem simples.
+
 [Steps](https://medium.com/steps) é um produto criado por [Fabian Ehlert](https://medium.com/@fabianehlert) e [Rikke Koblauch](https://medium.com/@rikkekoblauch) que se propõe a resolver o problema da ansiedade utilizando um método de terapia de exposição. Esse formato de terapia se baseia na ideia de você ir concluindo atividades que te forçam a lidar com seus medos, no caso da ansiedade, por exemplo, seria dar [high fives com pessoas desconhecidas na rua](https://medium.com/steps/how-high-fiving-strangers-helps-me-design-products-335775285d8a#.djjw4zqqt).
 
 {{< figure src="https://cdn-images-1.medium.com/max/800/1*zQ_-ZA-F8K4gCk4cM9jZrQ.jpeg"

@@ -1,15 +1,18 @@
 +++
 tags = ["Openshift","Kubernetes","Introduction","Simple","Docker"]
 date = "2017-03-08"
-title = "Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2"
 toc = false
 draft = true
 images = ["/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png"]
+title = "Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2"
+description = "Uma vez que entendemos os conceitos básicos do Kubernetes na postagem anterior, vamos para uma demonstração de como utilizá-lo para montar uma aplicação simples"
 
 prev = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/"
 next = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/"
 
 +++
+
+<!--more-->
 
 {{< figure src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" >}}
 
