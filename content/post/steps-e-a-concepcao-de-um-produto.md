@@ -2,7 +2,7 @@
 description = "Recentemente na newsletter do Product Hunt me deparei com um aplicativo bem interessante que se propunha a solucionar um problema bem comum, com uma formula bem simples."
 date = "2017-02-24"
 title = "Steps e a concepção de um produto"
-images = ["https://source.unsplash.com/category/technology/1600x900"]
+images = ["https://cdn-images-1.medium.com/max/800/1*zQ_-ZA-F8K4gCk4cM9jZrQ.jpeg"]
 tags = ["Apps","Social Anxiety","Product Design","New Product Development"]
 toc = false
 draft = false
