@@ -1,11 +1,6 @@
 #!/bin/bash
 
-HUGO="/usr/bin/hugo"
-if [ ! -f "$HUGO" ]; then
-    HUGO="docker-compose --user $UID:$GID run --rm hugo"
-fi
-
-$HUGO -v -b https://lucassabreu.github.io
+docker-compose run --user $UID:$GID --rm hugo -v -b https://lucassabreu.github.io
 
 cd public
 git add --all
