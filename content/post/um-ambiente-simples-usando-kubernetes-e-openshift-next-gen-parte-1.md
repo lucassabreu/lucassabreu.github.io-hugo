@@ -1,5 +1,5 @@
 +++
-draft = true
+draft = false
 images = ["/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png"]
 tags = ["Kubernetes","Openshift","Introduction","Simple","Docker"]
 toc = false
@@ -11,7 +11,7 @@ next = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2
 
 <!--more-->
 
-{{< figure src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" >}}
+{{< figure class="big" src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" >}}
 
 Como parte das minhas metas dentro da [Coderockr](http://blog.coderockr.com) está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o [Docker Swarm](https://docs.docker.com/engine/swarm/), [Kubernetes](http://kubernetes.io), [Apache Mesos](http://mesos.apache.org/), etc.
 
