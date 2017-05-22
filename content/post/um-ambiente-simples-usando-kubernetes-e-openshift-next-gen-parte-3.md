@@ -1,6 +1,6 @@
 +++
 draft = false
-date = "2017-01-09"
+date = "2017-03-09"
 title = "Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3"
 description = "Agora que sabemos os conceitos por traz do Kubernetes e vimos um exemplo básico de utilização, vamos ver como lidamos com contêiners que precisam de persistência."
 images = ["/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png"]
