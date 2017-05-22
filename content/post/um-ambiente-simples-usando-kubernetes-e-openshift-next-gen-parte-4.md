@@ -7,6 +7,8 @@ description = "Para completar a jornada vamos ver como o Kubernetes lida com dad
 images = ["/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png"]
 tags = ["Kubernetes","Openshift","Introduction","Simple","Docker"]
 
+prev = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/"
+
 +++
 
 <!--more-->

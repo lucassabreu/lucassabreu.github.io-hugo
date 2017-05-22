@@ -7,6 +7,9 @@ images = ["/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-part
 tags = ["Kubernetes","Openshift","Introduction","Simple","Docker"]
 toc = false
 
+prev = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/"
+next = "/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/"
+
 +++
 
 <!--more-->
