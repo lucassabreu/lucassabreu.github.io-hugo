@@ -1,5 +1,5 @@
 +++
-draft = true
+draft = false
 images = ["/post/ambientes-por-branch-com-openshift-next-gen/header.png"]
 tags = ["Openshift","Gitlab","Continuous Integration","Pull Request","Github"]
 date = "2017-05-01"

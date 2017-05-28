@@ -2,7 +2,7 @@
 title = "Ambientes por Branch com OpenShift Next Gen usando GitHub"
 tags = ["Openshift","Continuous Integration","Continuous Deployment","Github","Buddy Works"]
 toc = false
-draft = true
+draft = false
 description = "Esta postagem é uma continuação da \"Ambientes por Branch com OpenShift Next Gen\", implementando o processo no GitHub usando Buddy.Works e o OpenShift da GetUp Cloud"
 images = ["/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png"]
 date = "2017-05-07"
