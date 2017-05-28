@@ -195,7 +195,7 @@ production:
 
 As mudança são os novos stages `staging` e `production`; as variáveis novas `KUBE_DOMAIN` e `CI_ENVIRONMENT_URL`; e o script `k8s/deploy`. Vamos por partes.
 
-A variável `KUBE_DOMAIN` vai ajudar a deixar o nosso processo de deploy mais simples, basicamente nós colocamos nela o domínio base que o OpenShift usa para expor as rotas dele, no caso da Getup seria “*getup.io*”. A `CI_ENVIRONMENT_URL` é completar a `KUBE_DOMAIN` e serve para informar o `k8s/deploy` qual endereço ele deve expor o ambiente, ele deve sempre terminar com o `KUBE_DOMAIN` e deve ser igual a `url` da chave `environment`, pois é por essa chave que o GitLab sabe onde os ambientes estão expostos.
+A variável `KUBE_DOMAIN` vai ajudar a deixar o nosso processo de deploy mais simples, basicamente nós colocamos nela o domínio base que o OpenShift usa para expor as rotas dele, no caso da Getup seria "*getup.io*". A `CI_ENVIRONMENT_URL` é completar a `KUBE_DOMAIN` e serve para informar o `k8s/deploy` qual endereço ele deve expor o ambiente, ele deve sempre terminar com o `KUBE_DOMAIN` e deve ser igual a `url` da chave `environment`, pois é por essa chave que o GitLab sabe onde os ambientes estão expostos.
 
 As etapas de `staging` e `production` irão fazer o deploy dos nossos ambientes e como comentei antes o ambiente de *staging* terá deploy automático para todo commit na master, enquanto *production* irá esperar uma ação do usuário. No mais as duas etapas são iguais mudando apenas a URL que estão sendo expostas. Estou usando a imagem `lucassabreu/openshift-k8s-cli` que é basicamente um `ubuntu` com o `oc` instalado.
 
@@ -236,7 +236,7 @@ echo ">> Deployed to $CI_ENVIRONMENT_URL"
 
 Vale ressaltar que é importante marcar os componentes do ambiente com `app=$CI_ENVIRONMENT_SLUG`, pois é assim que o GitLab consegue encontrar eles e lhe retornar status sobre eles.
 
-Também estou usando um truque de “*templating*” com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o [Helm](https://github.com/kubernetes/helm), mas para o meu exemplo templating com `sed` é o suficiente.
+Também estou usando um truque de "templating" com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o [Helm](https://github.com/kubernetes/helm), mas para o meu exemplo templating com `sed` é o suficiente.
 
 ```yaml
 apiVersion: extensions/v1beta1
