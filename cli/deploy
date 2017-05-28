@@ -1,8 +1,12 @@
 #!/bin/bash
 
-docker-compose run --user $UID:$GID --rm hugo -v -b https://lucassabreu.github.io
-
 cd public
+git fetch && git reset --hard origin/master && git pull origin master
+if [ ! $? -eq 0 ]; then
+    exit 1
+fi
+
+docker-compose run --user $UID:$GID --rm hugo -v -b http://www.lucassabreu.net.br
 git add --all
 git commit -m "updated at $(date +'%F')"
 git push origin master
