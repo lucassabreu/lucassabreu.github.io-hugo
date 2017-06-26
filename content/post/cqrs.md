@@ -243,7 +243,9 @@ Com a ajuda do Doctrine essas duas classes vão criar estas duas tabelas:
 
 {{< figure src="./erd.png" >}}
 
-Para os comandos da nossa aplicação teremos apenas esse modelo, pois é um contexto bem simples. Primeiramente vamos criar o comando `create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
+Para os comandos da nossa aplicação teremos apenas esse modelo, pois é um contexto bem simples.
+
+Agora vamos criar o comando `create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
 
 ```php
 ```
