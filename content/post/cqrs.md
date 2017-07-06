@@ -134,9 +134,22 @@ class Account
 
     public function __construct(string $name, float $initialBalance = 0)
     {
+        if ($initialBalance < 0) {
+            throw Account\AccountException::initialBalanceShouldNotBeNegative($initialBalance);
+        }
+
+        if (empty($name)) {
+            throw Account\AccountException::nameShouldNotBeEmpty($name);
+        }
+
         $this->name = $name;
         $this->initialBalance = $initialBalance;
         $this->movements = new \Doctrine\Common\Collections\ArrayCollection;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getName() : string
@@ -167,7 +180,7 @@ use DateTime;
 class Movement
 {
     const INCREASE = 1;
-    const DESCREASE = 0;
+    const DECREASE = 0;
 
     /**
      * @ORM\Id
@@ -193,11 +206,40 @@ class Movement
      */
     private $value;
 
+    public static function createIncreaseMovementWithAccountDateAndAmount(
+        Account $account,
+        \DateTime $when,
+        float $amount
+    ) {
+        if ($amount <= 0) {
+            throw Movement\MovementException::amountShouldBePositive($amount);
+        }
+
+        return new self($account, $amount, $when);
+    }
+
+    public static function createDecreaseMovementWithAccountDateAndAmount(
+        Account $account,
+        \DateTime $when,
+        float $amount
+    ) {
+        if ($amount <= 0) {
+            throw Movement\MovementException::amountShouldBePositive($amount);
+        }
+
+        return new self($account, $amount * -1, $when);
+    }
+
     public function __construct(Account $account, float $value, DateTime $date = null)
     {
         $this->account = $account;
         $this->setValue($value);
         $this->date = $date ?: new DateTime;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function setValue(float $value) : self
@@ -248,5 +290,34 @@ Para os comandos da nossa aplicação teremos apenas esse modelo, pois é um con
 Agora vamos criar o comando `create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
 
 ```php
+<?php
+
+namespace App\Action;
+
+class AccountCreateAction implements \Interop\Http\ServerMiddleware\MiddlewareInterface
+{
+    [...]
+
+    public function process(
+        \Psr\Http\Message\ServerRequestInterface $request,
+        \Interop\Http\ServerMiddleware\DelegateInterface $delegate
+    ) {
+        $data = $request->getParsedBody();
+
+        if (!isset($data['name'])) {
+            throw \App\Model\Account\AccountException::nameShouldNotBeEmpty();
+        }
+
+        if (!isset($data['initialBalance'])) {
+            $data['initialBalance'] = 0;
+        }
+
+        $account = new \App\Model\Account($data['name'], $data['initialBalance']);
+        $this->entityManager->persist($account);
+        $this->entityManager->flush();
+
+        return new \Zend\Diactoros\Response\JsonResponse([ 'id' => $account->getId() ]);
+    }
+}
 ```
 
