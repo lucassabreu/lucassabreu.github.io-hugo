@@ -19,6 +19,12 @@ pygmentsCodeFences = true
   url = "/"
 
 [[menu.main]]
+  name = "Resume"
+  weight = 1
+  identifier = "Resume"
+  url = "/resume"
+
+[[menu.main]]
   name = "Twitter"
   weight = 2
   identifier = "twitter"
