@@ -287,7 +287,7 @@ Com a ajuda do Doctrine essas duas classes vão criar estas duas tabelas:
 
 Para os comandos da nossa aplicação teremos apenas esse modelo, pois é um contexto bem simples.
 
-Agora vamos criar o comando `create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
+Agora vamos criar o comando `account/create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
 
 ```php
 <?php
@@ -320,4 +320,106 @@ class AccountCreateAction implements \Interop\Http\ServerMiddleware\MiddlewareIn
     }
 }
 ```
+<p class="code-legend">command/src/App/Action/AccountCreateAction.php</p>
 
+Nela estamos processando e validando a criação de uma conta, que recebe apenas o nome e balanço inicial como mensagem. Esse comando vai lidar apenas com a criação da conta, nada mais, dessa forma o conteúdo da mensagem enviada fica mais simples, assim como a regra.
+
+Em seguida vamos outros dois Actions, um para criar movimentações negativos e outro para movimentações negativas:
+
+```php
+<?php
+
+namespace App\Action;
+
+use App\Model;
+
+class AccountDecreaseAction implements \Interop\Http\ServerMiddleware\MiddlewareInterface
+{
+    [...]
+
+    public function process(
+        \Psr\Http\Message\ServerRequestInterface $request,
+        \Interop\Http\ServerMiddleware\DelegateInterface $delegate
+    ) {
+        $data = $request->getParsedBody();
+
+        if (!isset($data['account'], $data['amount'], $data['date'])) {
+            throw Model\Movement\MovementException::requiredValuesNotInformed(
+                array_keys($data)
+            );
+        }
+
+        if (!is_int($data['account'])) {
+            throw Model\Movement\MovementException::mustInformAccountId();
+        }
+
+        $account = $this->entityManager->getRepository(Model\Account::class)
+            ->findOneById((int) $data['account']);
+
+        if (is_null($account)) {
+            throw Model\Movement\MovementException::accountDoesNotExists($data['account']);
+        }
+
+        $movement = Model\Movement::createDecreaseMovementWithAccountDateAndAmount(
+            $account,
+            new \DateTime($data['date']),
+            (float) $data['amount']
+        );
+        $this->entityManager->persist($movement);
+        $this->entityManager->flush();
+
+        return new \Zend\Diactoros\Response\JsonResponse([ 'id' => $movement->getId() ]);
+    }
+}
+```
+<p class="code-legend">command/src/App/Action/AccountDecreaseAction.php</p>
+
+```php
+<?php
+
+namespace App\Action;
+
+use App\Model;
+
+class AccountIncreaseAction implements \Interop\Http\ServerMiddleware\MiddlewareInterface
+{
+    [...]
+
+    public function process(
+        \Psr\Http\Message\ServerRequestInterface $request,
+        \Interop\Http\ServerMiddleware\DelegateInterface $delegate
+    ) {
+        $data = $request->getParsedBody();
+
+        if (!isset($data['account'], $data['amount'], $data['date'])) {
+            throw Model\Movement\MovementException::requiredValuesNotInformed(
+                array_keys($data)
+            );
+        }
+
+        if (!is_int($data['account'])) {
+            throw Model\Movement\MovementException::mustInformAccountId();
+        }
+
+        $account = $this->entityManager->getRepository(Model\Account::class)
+            ->findOneById((int) $data['account']);
+
+        if (is_null($account)) {
+            throw Model\Movement\MovementException::accountDoesNotExists($data['account']);
+        }
+
+        $movement = Model\Movement::createIncreaseMovementWithAccountDateAndAmount(
+            $account,
+            new \DateTime($data['date']),
+            (float) $data['amount']
+        );
+        $this->entityManager->persist($movement);
+        $this->entityManager->flush();
+
+        return new \Zend\Diactoros\Response\JsonResponse([ 'id' => $movement->getId() ]);
+    }
+}
+```
+<p class="code-legend">command/src/App/Action/AccountIncreaseAction.php</p>
+
+Esses dois comandos tem a mesma estrutura, e basicamente recebem qual conta, valor e quando ocorreu a movimentação, o valor é sempre positivo e cada Action cria o movimento adequado.
