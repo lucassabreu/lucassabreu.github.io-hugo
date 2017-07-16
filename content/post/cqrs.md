@@ -430,6 +430,96 @@ Agora vamos começar a implementar o `query`, nele vamos poder consultar o saldo
 
 Para esses casos usarei um modelo para cada um dos retornos, e para manter a abstração do banco de dados vou criar `views` para esses modelos, dessa forma o meu código não precisará ter um SQL com conhecimento do banco de dados (exceto nas migrations).
 
-O primeiro é o saldo atual:
+O primeiro é o saldo atual, para tanto irei criar uma `view` que retonar o balanço atual da conta, o SQL dele é:
 
+```sql
+CREATE VIEW account_current_balance AS
+    SELECT a.id, a.name, SUM(a.initial_balance) + SUM(m.value) AS current_balance
+        FROM account a
+        INNER JOIN movement m
+            ON m.account_id = a.id
+        GROUP BY a.id, a.name
+```
+<p class="code-legend">create view account_current_balance</p>
+
+Agora podemos mapear uma entidade no Doctrine para consultar a `view` `account_current_balance` que criamos, no caso a chamei de `AccountCurrentBalance`:
+
+```php
+<?php
+
+namespace App\Model;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Table(name="account_current_balance")
+ */
+class AccountCurrentBalance
+{
+    /**
+     * @ORM\Column(name="id", type="integer")
+     */
+    private $id;
+    /**
+     * @ORM\Column(name="name", type="string")
+     */
+    private $name;
+    /**
+     * @ORM\Column(name="current_balance", type="decimal", precision=18, scale=2)
+     */
+    private $currentBalance;
+
+    private function __construct()
+    {
+    }
+
+    public function getId() : int
+    {
+        return $this->id;
+    }
+
+    public function getName() : string
+    {
+        return $this->name;
+    }
+
+    public function getCurrentBalance() : float
+    {
+        return $this->currentBalance;
+    }
+}
+```
+<p class="code-legend">query/src/App/Model/AccountCurrentBalance.php</p>
+
+Por fim criei uma `Action` que recebe o `id` da conta como parâmetro e retorna o saldo atual dela:
+
+```php
+<?php
+
+namespace App\Action;
+
+class GetAccountCurrentBalanceAction
+    implements \Interop\Http\ServerMiddleware\MiddlewareInterface
+{
+    [...]
+
+    public function process(
+        \Psr\Http\Message\ServerRequestInterface $request,
+        \Interop\Http\ServerMiddleware\DelegateInterface $delegate
+    ) {
+        $id = $request->getAttribute('id');
+        $accountBalance = $this->entityManager
+            ->getRepository(\App\Model\AccountCurrentBalance::class)
+            ->findOneById((int) $id);
+
+        return new \Zend\Diactoros\Response\JsonResponse([
+            'id' => $accountBalance->getId(),
+            'name' => $accountBalance->getName(),
+            'currentBalance' => $accountBalance->getCurrentBalance(),
+        ]);
+    }
+}
+```
+<p class="code-legend">query/src/App/Action/GetAccountCurrentBalanceAction.php</p>
 
