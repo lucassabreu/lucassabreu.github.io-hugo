@@ -11,11 +11,6 @@ toc = false
 
 <!--more-->
 
-* Explicar sobre confusões no conceito
-* Delimitar o conceito
-* Introduzir alguns exemplos e usos
-* Aplicação de exemplo?
-
 Eu ouvia falar  de CQRS com alguma frequência para se definir arquiteturas e modelagens de sistemas, e normalmente vejo vários outros conceitos associados quando falam dele, como Event Sourcing, Reporting Database e DDD. O que me levou a acreditar que CQRS fosse um grande monstro usando essas mecânicas que por si só já carregam uma complexidade.
 
 Como parte das minhas metas na [Coderockr](http://blog.coderockr.com) me propus a entender melhor o que é o CQRS e acabei descobrindo que é bem mais simples do que esperava. 
@@ -98,7 +93,7 @@ cqrs-example
 
 Caso queria acompanhar pode buscar o fonte aqui: [**lucassabreu/cqrs-example** root](https://github.com/lucassabreu/cqrs-example/tree/root)
 
-Primeiro vamos implementar o `command`, nele vamos ter três operações: `account/create`, `account/increase` e `account/decrease`, apenas para demonstração. Para estas ações vou precisar de duas entidades: `Account` e `Movements`, o fonte delas esta abaixo e é bastante simples.
+Primeiro vamos implementar o `command`, nele vamos ter três operações: `/command/account/create`, `/command/account/increase` e `/command/account/decrease`, apenas para demonstração. Para estas ações vou precisar de duas entidades: `Account` e `Movements`, o fonte delas esta abaixo e é bastante simples.
 
 ```php
 <?php
@@ -287,7 +282,7 @@ Com a ajuda do Doctrine essas duas classes vão criar estas duas tabelas:
 
 Para os comandos da nossa aplicação teremos apenas esse modelo, pois é um contexto bem simples.
 
-Agora vamos criar o comando `/account/create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
+Agora vamos criar o comando `/command/account/create`, para tanto vou precisar registrar uma nova Action no Zend Expressive, mas não se preocupe, a única parte importante para nós dessa alteração é esta:
 
 ```php
 <?php
@@ -324,7 +319,7 @@ class AccountCreateAction implements \Interop\Http\ServerMiddleware\MiddlewareIn
 
 Nela estamos processando e validando a criação de uma conta, que recebe apenas o nome e balanço inicial como mensagem. Esse comando vai lidar apenas com a criação da conta, nada mais, dessa forma o conteúdo da mensagem enviada fica mais simples, assim como a regra.
 
-Em seguida vamos outros dois Actions, um para criar movimentações positivas (`account/increase`) e outro para movimentações negativas (`account/decrease`):
+Em seguida vamos outros dois Actions, um para criar movimentações positivas (`/command/account/increase`) e outro para movimentações negativas (`/command/account/decrease`):
 
 ```php
 <?php
@@ -426,7 +421,7 @@ Esses dois comandos tem a mesma estrutura, e basicamente recebem qual conta, val
 
 Com estes três endpoints temos todas os comandos necessários para controlar as nossas contas.
 
-Agora vamos começar a implementar o `query`, nele vamos poder consultar o saldo atual (`account/balance`), saldo do dia (`account/balance-at-day`), detalhes da conta (`account/detail`) e extrato (`account/statement`).
+Agora vamos começar a implementar o `query`, nele vamos poder consultar o saldo atual (`/query/account/balance`), saldo do dia (`/query/account/balance-at-day`), detalhes da conta (`/query/account/detail`) e extrato (`/query/account/statement`).
 
 Para esses casos usarei um modelo para cada um dos retornos, e para manter a abstração do banco de dados vou criar `views` para esses modelos, dessa forma o meu código não precisará ter um SQL com conhecimento do banco de dados (exceto nas migrations).
 
@@ -522,4 +517,8 @@ class GetAccountCurrentBalanceAction
 }
 ```
 <p class="code-legend">query/src/App/Action/GetAccountCurrentBalanceAction.php</p>
+
+O modelo que criamos para o `/query/account/balance` existe apenas para resolver o problema que essa consulta se propõe, isso permite que futuras melhorias nesse ponto possam ser feitas sem quebrar outras partes do sistema, e como comentei antes evita a necessidade de consultar vários modelos compartilhados.
+
+As outras duas `querys` seguem o mesmo conceito:
 
