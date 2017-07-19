@@ -423,21 +423,7 @@ Com estes três endpoints temos todas os comandos necessários para controlar as
 
 Agora vamos começar a implementar o `query`, nele vamos poder consultar o saldo atual (`/query/account/balance`), saldo do dia (`/query/account/balance-at-day`), detalhes da conta (`/query/account/detail`) e extrato (`/query/account/statement`).
 
-Para esses casos usarei um modelo para cada um dos retornos, e para manter a abstração do banco de dados vou criar `views` para esses modelos, dessa forma o meu código não precisará ter um SQL com conhecimento do banco de dados (exceto nas migrations).
-
-O primeiro é o saldo atual, para tanto irei criar uma `view` que retonar o balanço atual da conta, o SQL dele é:
-
-```sql
-CREATE VIEW account_current_balance AS
-    SELECT a.id, a.name, SUM(a.initial_balance) + SUM(m.value) AS current_balance
-        FROM account a
-        INNER JOIN movement m
-            ON m.account_id = a.id
-        GROUP BY a.id, a.name
-```
-<p class="code-legend">create view account_current_balance</p>
-
-Agora podemos mapear uma entidade no Doctrine para consultar a `view` `account_current_balance` que criamos, no caso a chamei de `AccountCurrentBalance`:
+Para poder criar as consultas de forma fácil, vou mapear as tabelas que criei no `command` no serviço de `query`, mas como apenas leitura. Os modelos delas ficam assim:
 
 ```php
 <?php
@@ -447,26 +433,143 @@ namespace App\Model;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(readOnly=true)
- * @ORM\Table(name="account_current_balance")
+ * @ORM\Entity
+ * @ORM\Table(name="account")
  */
-class AccountCurrentBalance
+class Account
 {
     /**
+     * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      */
     private $id;
     /**
-     * @ORM\Column(name="name", type="string")
+     * @ORM\Column(name="name", type="string", length=100)
      */
     private $name;
     /**
-     * @ORM\Column(name="current_balance", type="decimal", precision=18, scale=2)
+     * @ORM\Column(name="initial_balance", type="decimal", precision=18, scale=2)
      */
-    private $currentBalance;
+    private $initialBalance;
+    /**
+     * @ORM\OneToMany(targetEntity="Movement", mappedBy="account")
+     */
+    private $movements;
 
     private function __construct()
     {
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName() : string
+    {
+        return $this->name;
+    }
+
+    public function getInitialBalance() : float
+    {
+        return $this->initialBalance;
+    }
+}
+
+```
+<p class="code-legend">query/src/App/Model/Account.php</p>
+
+```php
+<?php
+
+namespace App\Model;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="movement")
+ */
+class Movement
+{
+    const INCREASE = 1;
+    const DECREASE = 0;
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(name="id", type="integer")
+     */
+    private $id;
+    /**
+     * @ORM\ManyToOne(targetEntity="Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+     */
+    private $account;
+    /**
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
+    /**
+     * @ORM\Column(name="type", type="smallint", precision=1)
+     */
+    private $type;
+    /**
+     * @ORM\Column(name="value", type="decimal", precision=18, scale=2)
+     */
+    private $value;
+
+    private function __construct()
+    {
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getValue() : float
+    {
+        return $value;
+    }
+
+    public function getType() : int
+    {
+        return $this->type;
+    }
+
+    public function getAccount() : Account
+    {
+        return $this->account;
+    }
+
+    public function getDate() : \DateTime
+    {
+        return $this->date;
+    }
+}
+```
+<p class="code-legend">query/src/App/Model/Movement.php</p>
+
+Para deixar o formato da mensagem mais fechado, define um modelo para o retorno da `query`:
+
+```php
+<?php
+
+namespace App\Model\AccountCurrentBalance;
+
+use Doctrine\ORM\Mapping as ORM;
+
+class AccountCurrentBalance
+{
+    private $id;
+    private $name;
+    private $currentBalance;
+
+    public function __construct(int $id, string $name, float $currentBalance)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->currentBalance = $currentBalance;
     }
 
     public function getId() : int
@@ -485,7 +588,6 @@ class AccountCurrentBalance
     }
 }
 ```
-<p class="code-legend">query/src/App/Model/AccountCurrentBalance.php</p>
 
 Por fim criei uma `Action` que recebe o `id` da conta como parâmetro e retorna o saldo atual dela:
 
@@ -498,6 +600,37 @@ class GetAccountCurrentBalanceAction
     implements \Interop\Http\ServerMiddleware\MiddlewareInterface
 {
     [...]
+
+    public function process(
+        \Psr\Http\Message\ServerRequestInterface $request,
+        \Interop\Http\ServerMiddleware\DelegateInterface $delegate
+    ) {
+        $id = $request->getAttribute('id');
+        $accountBalance = $this->entityManager
+            ->createQuery(
+                "SELECT
+                    new " . AccountCurrentBalance::class . "(
+                        a.id,
+                        a.name,
+                        SUM(a.initialBalance) + SUM(m.value)
+                    )
+                    FROM " . Account::class . " a INNER JOIN a.movements m
+                    WHERE a.id = :id
+                    GROUP BY a.id, a.name"
+            )
+            ->setParameter('id', (int) $id)
+            ->getOneOrNullResult();
+
+        if (is_null($accountBalance)) {
+            throw new Exception\ModelNotFoundException('Account ' . $id);
+        }
+
+        return new \Zend\Diactoros\Response\JsonResponse([
+            'id' => $accountBalance->getId(),
+            'name' => $accountBalance->getName(),
+            'currentBalance' => $accountBalance->getCurrentBalance(),
+        ]);
+    }
 
     public function process(
         \Psr\Http\Message\ServerRequestInterface $request,
@@ -521,4 +654,5 @@ class GetAccountCurrentBalanceAction
 O modelo que criamos para o `/query/account/balance` existe apenas para resolver o problema que essa consulta se propõe, isso permite que futuras melhorias nesse ponto possam ser feitas sem quebrar outras partes do sistema, e como comentei antes evita a necessidade de consultar vários modelos compartilhados.
 
 As outras duas `querys` seguem o mesmo conceito:
+
 
