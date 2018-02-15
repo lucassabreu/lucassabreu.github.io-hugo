@@ -6,6 +6,8 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
+git submodule update --init
+
 docker-compose run --user $UID:$GID --rm hugo -v -b http://www.lucassabreu.net.br
 git add --all
 git commit -m "updated at $(date +'%F')"
