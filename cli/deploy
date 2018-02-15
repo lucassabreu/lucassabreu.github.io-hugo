@@ -1,12 +1,12 @@
 #!/bin/bash
 
+git submodule update --init
+
 cd public
-git fetch && git reset --hard origin/master && git pull origin master
+git fetch && git checkout master && git reset --hard origin/master && git pull origin master
 if [ ! $? -eq 0 ]; then
     exit 1
 fi
-
-git submodule update --init
 
 docker-compose run --user $UID:$GID --rm hugo -v -b http://www.lucassabreu.net.br
 git add --all
