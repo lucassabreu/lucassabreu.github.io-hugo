@@ -5,6 +5,21 @@ backend:
 media_folder: "images/uploads" # Media files will be stored in the repo under images/uploads
 public_folder: "/images/uploads" # The src attribute for uploaded media will begin with /images/uploads
 collections:
+  - name: "drafts" # Used in routes, e.g., /admin/collections/posts
+    label: "drafts" # Used in the UI
+    folder: "content/post" # The path to the folder where the documents are stored
+    filter: {field: "draft", value: true}
+    create: true # Allow users to create new documents in this collection
+    slug: "{{slug}}" # Filename template, e.g., title.md
+    fields: # The fields for each document, usually in front matter
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Publish Date", name: "date", widget: "datetime"}
+      - {label: "Images", name: "images", widget: "list", required: false, default: [], field: [{label: Image, name: image, widget: image}]}
+      - {label: "Draft", name: "draft", widget: "boolean", default: true}
+      - {label: "TOC", name: "toc", widget: "boolean", default: false}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Tags", name: "tags", widget: "list", default: []}
+      - {label: "Body", name: "body", widget: "markdown"}
   - name: "posts" # Used in routes, e.g., /admin/collections/posts
     label: "Posts" # Used in the UI
     folder: "content/post" # The path to the folder where the documents are stored
@@ -32,15 +47,16 @@ collections:
       - {label: "Description", name: "description", widget: "text"}
       - {label: "Tags", name: "tags", widget: "list", default: []}
       - {label: "Body", name: "body", widget: "markdown"}
-  - name: "about" # Used in routes, e.g., /admin/collections/gists
-    label: "About" # Used in the UI
-    folder: "content/about" # The path to the folder where the documents are stored
-    create: true # Allow users to create new documents in this collection
-    slug: "{{slug}}" # Filename template, e.g., title.md
-    fields: # The fields for each document, usually in front matter
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Publish Date", name: "date", widget: "datetime"}
-      - {label: "Draft", name: "draft", widget: "hidden", default: false}
-      - {label: "TOC", name: "toc", widget: "hidden", default: false}
-      - {label: "Description", name: "description", widget: "hidden", default: ""}
-      - {label: "Body", name: "body", widget: "markdown"}
+  - label: "Pages"
+    name: "pages"
+    files:
+      - name: "about" # Used in routes, e.g., /admin/collections/gists
+        label: "About" # Used in the UI
+        file: "content/about/_index.md" # The path to the folder where the documents are stored
+        fields: # The fields for each document, usually in front matter
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Publish Date", name: "date", widget: "datetime"}
+          - {label: "Draft", name: "draft", widget: "hidden", default: false}
+          - {label: "TOC", name: "toc", widget: "hidden", default: false}
+          - {label: "Description", name: "description", widget: "hidden", default: ""}
+          - {label: "Body", name: "body", widget: "markdown"}
