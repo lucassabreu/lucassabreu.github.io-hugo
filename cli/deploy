@@ -2,15 +2,29 @@
 
 git submodule update --init
 
+# reseting public to avoid conflicts
 cd public
 git fetch && git checkout master && git reset --hard origin/master && git pull origin master
 if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-docker-compose run --user $UID:$GID --rm hugo -v -b http://www.lucassabreu.net.br
+# build blog
+cd ..
+./binaries/hugo -v -b http://www.lucassabreu.net.br
+
+# commit changes
+cd public
+ORIGIN=origin
+if [[ "$1" == "-t" ]]; then
+    git config --global user.email "travis@travis-ci.org"
+    git config --global user.name "Travis CI"
+    git remote add origin-pages https://${GH_TOKEN}@github.com/lucassabreu/lucassabreu.github.io > /dev/null 2>&1
+ORIGIN=origin-pages
+fi
+
 git add --all
-git commit -m "updated at $(date +'%F')"
-git push origin master
+git commit -m "updated at $(date +'%F'). Travis build: $TRAVIS_BUILD_NUMBER"
+git push $ORIGIN master
 
 cd ..
