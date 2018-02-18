@@ -11,4 +11,5 @@ tags:
   - cloudfront
   - s3
 ---
+<!-- more -->
 Recentemente alteramos a landing page e o SPA do Planrockr para suportar HTTPS, por muito tempo mantemos apenas o backend executando sobre HTTPS, mas percebemos que seria melhor prover nosso frontend sobre HTTPS também, seja para melhorar o [ranking em sites de pesquisa](https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html), garantir a segurança nas comunicações ou simplesmente passar mais segurança para os nossos usuários. 
