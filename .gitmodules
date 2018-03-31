@@ -1,4 +1,6 @@
+[submodule "public"]
+	path = public
+	url = https://github.com/lucassabreu/lucassabreu.github.io.git
 [submodule "themes/after-dark"]
 	path = themes/after-dark
-	url = ../../lucassabreu/after-dark.git
-	branch = master
+	url = https://github.com/lucassabreu/after-dark.git
