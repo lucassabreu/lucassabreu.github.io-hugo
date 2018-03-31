@@ -1,2 +1,3 @@
 [build]
   publish = "cms"
+  command = "cli/deploy"

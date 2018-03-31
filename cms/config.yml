@@ -2,8 +2,8 @@ backend:
   name: github
   repo: lucassabreu/lucassabreu.github.io-hugo # Path to your Github repository
 # publish_mode: editorial_workflow
-media_folder: "images/uploads" # Media files will be stored in the repo under images/uploads
-public_folder: "/images/uploads" # The src attribute for uploaded media will begin with /images/uploads
+media_folder: "/content/uploads" # Media files will be stored in the repo under images/uploads
+public_folder: "http://www.lucassabreu.net.br/uploads" # The src attribute for uploaded media will begin with
 collections:
   - name: "drafts" # Used in routes, e.g., /admin/collections/posts
     label: "Drafts" # Used in the UI

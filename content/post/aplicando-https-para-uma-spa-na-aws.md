@@ -24,3 +24,5 @@ Para evitar que outros acabem passando por problemas semelhantes e para servir d
 
 Para usar HTTPS em um bucket do S3, primeiro é necessário possuir um bucket (😜) 
 
+{{< figure class="big" src="/uploads/bucket-index.png" >}}
+
