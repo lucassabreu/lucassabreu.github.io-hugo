@@ -12,7 +12,7 @@ tags:
   - s3
 ---
 <!-- more -->
-Recentemente alteramos a landing page e o SPA do Planrockr para suportar HTTPS, por muito tempo mantemos apenas o backend executando sobre HTTPS, mas percebemos que seria melhor prover nosso frontend sobre HTTPS também, seja para melhorar o [ranking em sites de pesquisa](https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html), para garantir a segurança nas comunicações ou simplesmente passar mais segurança para os nossos usuários. 
+Recentemente alteramos a landing page e o SPA do Planrockr para suportar HTTPS, inicialmente tempo mantemos apenas o backend executando sobre HTTPS, mas percebemos que seria melhor prover nosso frontend sobre HTTPS também, seja para melhorar o [ranking em sites de pesquisa](https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html), para garantir a segurança nas comunicações ou simplesmente passar mais segurança para os nossos usuários. 
 
 Foi uma tarefa que acabou dando alguma dor de cabeça, não por ser uma tarefa difícil, como estamos usando o S3 da AWS para prover a Landing e o frontend do Planrockr, é apenas uma questão de colocar um CloudFront na frente e alterar a rota no Route 53 e tudo passa a funcionar.
 
