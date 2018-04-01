@@ -1,8 +1,9 @@
 ---
 title: "Aplicando HTTPS para uma SPA na\_AWS"
 date: 2018-02-18T14:44:28.803Z
-images: []
-draft: true
+images:
+  - /uploads/banner-cf-s3-https.svg.png
+draft: false
 toc: false
 description: Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS
 tags:
@@ -12,6 +13,9 @@ tags:
   - s3
 ---
 <!-- more -->
+
+{{< figure class="big" src="/uploads/banner-cf-s3-https.svg.png" >}}
+
 Recentemente alteramos a landing page e o SPA do Planrockr para suportar HTTPS, inicialmente tempo mantemos apenas o backend executando sobre HTTPS, mas percebemos que seria melhor prover nosso frontend sobre HTTPS também, seja para melhorar o [ranking em sites de pesquisa](https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html), para garantir a segurança nas comunicações ou simplesmente passar mais segurança para os nossos usuários. 
 
 Foi uma tarefa que acabou dando alguma dor de cabeça, não por ser uma tarefa difícil, como estamos usando o S3 da AWS para prover a Landing e o frontend do Planrockr, é apenas uma questão de colocar um CloudFront na frente e alterar a rota no Route 53 e tudo passa a funcionar.
