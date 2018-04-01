@@ -5,6 +5,7 @@ theme = "after-dark"
 
 disqusShortname = "lucas-dos-santos-abreu"
 pygmentsCodeFences = true
+enableEmoji = true
 
 [Params]
   theme_variant = "hack"
