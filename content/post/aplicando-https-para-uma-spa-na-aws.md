@@ -1,6 +1,6 @@
 ---
 title: "Aplicando HTTPS para uma SPA na\_AWS"
-date: 2018-02-18T14:44:28.803Z
+date: '2018-03-31T22:00:00-03:00'
 images:
   - /uploads/banner-cf-s3-https.svg.png
 draft: false
@@ -77,6 +77,8 @@ Fica assim:
 O S3 retorna os Status Codes `403` e `404` quando não consegue achar um arquivo ou não permite acesso a ele, desse modo criando a regra acima para esses dois Status Codes todas as requisições (que não forem de assets) serão direcionados ao `index.html`.
 
 Depois destes ajustes você tem um bucket do S3 sendo servido com HTTPS pelo CloudFront sem quaisquer problemas.
+
+---
 
 É importante dizer que essa solução é muito boa para SPAs, mas se possuir regras mais complexas de redirecionamentos, ou mais "páginas principais" para o mesmo site então provavelmente não vai lhe atender, pois não a suporte no CloudFront para isso, seria necessário tratar na origem que o CloudFront estiver lendo.
 
