@@ -1,4 +1,3 @@
 #!/bin/bash
 
-docker-compose run --user $UID:$GID --rm hugo $@
-
+./binaries/hugo $@
