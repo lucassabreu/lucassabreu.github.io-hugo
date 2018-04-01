@@ -81,7 +81,3 @@ Depois destes ajustes você tem um bucket do S3 sendo servido com HTTPS pelo Clo
 ---
 
 É importante dizer que essa solução é muito boa para SPAs, mas se possuir regras mais complexas de redirecionamentos, ou mais "páginas principais" para o mesmo site então provavelmente não vai lhe atender, pois não a suporte no CloudFront para isso, seria necessário tratar na origem que o CloudFront estiver lendo.
-
-
-
-
