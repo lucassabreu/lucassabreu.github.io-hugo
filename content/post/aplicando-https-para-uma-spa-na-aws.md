@@ -12,27 +12,25 @@ tags:
   - cloudfront
   - s3
 ---
-
 <!--more-->
 
 {{< figure class="big" src="/uploads/banner-cf-s3-https.svg.png" >}}
 
 Recentemente passamos a servir a nossa landing page e o SPA do [Planrockr](https://planrockr.com/) sobre HTTPS, inicialmente apenas estamos usando HTTPS no nosso backend, mas percebemos que seria melhor que nosso frontend também usasse.
 
-Alguns dos motivos por traz disso seriam para melhorar o [ranking em sites de pesquisa](https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html), para garantir ainda mais a segurança nas comunicações e também para passar mais segurança para os nossos usuários.
+Alguns dos motivos por traz disso seriam para melhorar o [ranking em sites de pesquisa](https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html), para garantir ainda mais a segurança nas comunicações, e também para passar mais segurança para os nossos usuários.
 
 Como estamos servindo nosso  frontend usando o S3 da AWS, é apenas uma questão de colocar um CloudFront na frente e alterar a rota no Route 53 e tudo passa a funcionar, mas acabou dando alguma dor de cabeça, não por ser uma tarefa difícil, mas simplesmente por termos encontrado instruções confusas e errôneas quando pesquisamos como executar a migração.
 
-A maioria dos tutoriais que existem na internet sobre habilitar HTTPS no AWS para um SPA passam a instrução errada de que não podemos usar o link facilitado do S3 para vincular com o CloudFront, o que acabou em um conjunto problemas de comunicação com o S3, e o fez rejeitar as chamadas vindas do CloudFront; e passar a simplesmente redirecionar para a URL pública do bucket, quebrando algumas funcionalidades do Planrockr, principalmente no on-boarding.
+A maioria dos tutoriais que existem na internet sobre habilitar HTTPS no AWS para um SPA passam a instrução errada de que não podemos usar o link facilitado do S3 para vincular com o CloudFront. Isso acabou em um conjunto problemas de comunicação com o S3, e o fez rejeitar as chamadas vindas do CloudFront; e passar a simplesmente redirecionar para a URL pública do bucket, quebrando algumas funcionalidades do Planrockr, principalmente no on-boarding.
 
 Para evitar que outros acabem passando por problemas semelhantes e para servir de registro para projetos futuros, abaixo vou descrever a forma correta (e fácil) de habilitar HTTPS usando o S3 e CloudFront da AWS.
 
----
+- - -
 
 Para usar HTTPS em um bucket do S3, primeiro é necessário possuir um bucket (😜), para esse tutorial, criei um bucket com o nome `simple.planrockr.com`, e adicionei um arquivo `index.html` bem simples:
 
 ```html
-
 <html>
 
 <head>
@@ -80,6 +78,6 @@ O S3 retorna os Status Codes `403` e `404` quando não consegue achar um arquivo
 
 Depois destes ajustes você tem um bucket do S3 sendo servido com HTTPS pelo CloudFront sem quaisquer problemas.
 
----
+- - -
 
 É importante dizer que essa solução é muito boa para SPAs, mas se possuir regras mais complexas de redirecionamentos, ou mais “páginas principais” para o mesmo site, então provavelmente não vai lhe atender, pois não há suporte no CloudFront para isso, seria necessário tratar na origem que o CloudFront estiver lendo.
