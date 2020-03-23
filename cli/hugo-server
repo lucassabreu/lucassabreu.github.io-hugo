@@ -1,3 +1,0 @@
-#!/bin/bash
-
-cli/hugo server --bind=0.0.0.0 -b "http://lucassabreu.test" #--buildDrafts
